@@ -16,18 +16,28 @@ String.prototype.format = function format()
   return msg;
 }
 
+function populateStarships(data) {
+    $.each( data, function( key, val ) {
+        $("#ss_list").append(
+            '<li cost="{0}">cost: {0} name: <a href="spaceship.html?url={1}">{2}</a></li>'.format(
+                val['cost_in_credits'],
+                encodeURIComponent(val['url']),
+                val['name']
+                ));
+    });
+}
+
+function loadStarshipURL(url) {
+    $.getJSON(url, function( data ) {
+        populateStarships(data['results']);
+        if(data['next']) {
+            loadStarshipURL(data['next']);
+        }
+    });
+}
 
 $(document).ready(function(){
-        $.getJSON( "http://swapi.co/api/starships/", function( data ) {
-            $.each( data['results'], function( key, val ) {
-                $("#ss_list").append(
-                    '<li cost="{0}">cost: {0} name: <a href="spaceship.html?url={1}">{2}</a></li>'.format(
-                        val['cost_in_credits'],
-                        encodeURIComponent(val['url']),
-                        val['name']
-                        ));
-            });
-        })
+    loadStarshipURL("http://swapi.co/api/starships/");
 });
 
 </script>
