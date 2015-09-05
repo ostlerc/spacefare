@@ -65,11 +65,23 @@ function cost_dec_sort(a, b) {
 }
 
 // http://stackoverflow.com/questions/1772035/filtering-a-list-as-you-type-with-jquery
-function filterText(element) {
-    var value = $(element).val().toLowerCase();
+function filterStarships() {
+    var value = $('#filter').val().toLowerCase();
+    var cost = $('#price_filter').val();
+
+    if (cost == "") {
+        cost = "1"
+    }
+    cost = parseInt(cost)
 
     $("#ss_list > li").each(function() {
-        if ($(this).attr('name').toLowerCase().search(value) > -1) {
+            var itemCost = $(this).attr('cost')
+            if (itemCost == "unknown") {
+                itemCost = cost
+            }
+            itemCost = parseInt(itemCost)
+
+        if ($(this).attr('name').toLowerCase().search(value) > -1 && itemCost >= cost) {
             $(this).show();
         }
         else {
@@ -88,7 +100,10 @@ $(document).ready(function(){
         $("#ss_list li").sort(cost_dec_sort).appendTo('#ss_list');
     })
     jQuery('#filter').on('input propertychange paste', function() {
-        filterText($('#filter'))
+        filterStarships();
+    });
+    jQuery('#price_filter').on('input propertychange paste', function() {
+        filterStarships();
     });
 });
 
@@ -96,7 +111,8 @@ $(document).ready(function(){
 
 <button type="button" id="sort_asc_btn">Sort Ascending</button>
 <button type="button" id="sort_dec_btn">Sort Descending</button>
-<input type="textbox" placeholder="Filter" id="filter" />
+<input type="textbox" placeholder="Filter" id="filter" /><br>
+min cost: <input type="number" placeholder="max price filter" min="1" id="price_filter" value="1"/>
 <ol id="ss_list", class="list"/>
 
 </body>
