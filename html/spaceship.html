@@ -8,6 +8,14 @@
 <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 <script>
 
+// http://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format
+String.prototype.format = function format() {
+  var msg = this;
+  for(var i in arguments)
+    msg = msg.replace(/\{\}/,arguments[i]).replace(new RegExp('\\{'+i+'\\}','g'),arguments[i]);
+  return msg;
+}
+
 // http://stackoverflow.com/questions/901115/how-can-i-get-query-string-values-in-javascript
 function getParameterByName(name) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
@@ -16,13 +24,23 @@ function getParameterByName(name) {
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+function populateStarship(url) {
+    $.getJSON(url, function( data ) {
+        $.each( data, function( key, val ) {
+            $("#starship_data").append("<li>{0}: {1}</li>".format(key, val));
+        });
+    });
+}
+
 $(document).ready(function(){
     var url = getParameterByName("url");
-    $("#debug").text("url is: " + url);
+    populateStarship(url)
+    //$("#debug").text("url is: " + url);
 })
 
 </script>
 <a href="spaceships.html">Back</a>
+<ul id="starship_data", class="list"/>
 <p id="debug"></p>
 </body>
 </html>
