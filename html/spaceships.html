@@ -8,8 +8,8 @@
 <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 <script>
 
-String.prototype.format = function format()
-{                                                                                                               
+// http://stackoverflow.com/questions/610406/javascript-equivalent-to-printf-string-format
+String.prototype.format = function format() {
   var msg = this;
   for(var i in arguments)
     msg = msg.replace(/\{\}/,arguments[i]).replace(new RegExp('\\{'+i+'\\}','g'),arguments[i]);
@@ -19,7 +19,7 @@ String.prototype.format = function format()
 function populateStarships(data) {
     $.each( data, function( key, val ) {
         $("#ss_list").append(
-            '<li cost="{0}">cost: {0} name: <a href="spaceship.html?url={1}">{2}</a></li>'.format(
+            '<li cost="{0}" name="{2}">cost: {0} name: <a href="spaceship.html?url={1}">{2}</a></li>'.format(
                 val['cost_in_credits'],
                 encodeURIComponent(val['url']),
                 val['name']
@@ -33,15 +33,53 @@ function loadStarshipURL(url) {
         if(data['next']) {
             loadStarshipURL(data['next']);
         }
+        $("#ss_list li").sort(cost_asc_sort).appendTo('#ss_list');
     });
 }
 
+function cost_asc_sort(a, b) {
+    var acost = $(a).attr("cost")
+    var bcost = $(b).attr("cost")
+
+    if (acost == "unknown" && bcost == "unknown") {
+        return ($(b).attr("name")) < ($(a).attr("name")) ? 1 : -1;
+    }
+    if (acost == "unknown") {
+        return 1
+    }
+    if (bcost == "unknown") {
+        return -1
+    }
+
+    var acostn = parseInt(acost)
+    var bcostn = parseInt(bcost)
+
+    if (bcostn == acostn) {
+        return ($(b).attr("name")) < ($(a).attr("name")) ? 1 : -1;
+    }
+    return bcostn < acostn ? 1 : -1;
+}
+
+function cost_dec_sort(a, b) {
+    return cost_asc_sort(a,b) == 1 ? -1 : 1;
+}
+
+
 $(document).ready(function(){
     loadStarshipURL("http://swapi.co/api/starships/");
+
+    $("#sort_asc_btn").click(function() {
+        $("#ss_list li").sort(cost_asc_sort).appendTo('#ss_list');
+    })
+    $("#sort_dec_btn").click(function() {
+        $("#ss_list li").sort(cost_dec_sort).appendTo('#ss_list');
+    })
 });
 
 </script>
 
+<button type="button" id="sort_asc_btn">Sort Ascending</button>
+<button type="button" id="sort_dec_btn">Sort Descending</button>
 <ol id="ss_list", class="list"/>
 
 </body>
