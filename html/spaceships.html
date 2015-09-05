@@ -19,7 +19,7 @@ String.prototype.format = function format() {
 function populateStarships(data) {
     $.each( data, function( key, val ) {
         $("#ss_list").append(
-            '<li cost="{0}" name="{2}">cost: {0} name: <a href="spaceship.html?url={1}">{2}</a></li>'.format(
+            '<li cost="{0}" name="{2}"><br> name: <a href="spaceship.html?url={1}">{2}</a><br>cost: {0}</li>'.format(
                 val['cost_in_credits'],
                 encodeURIComponent(val['url']),
                 val['name']
@@ -45,10 +45,10 @@ function cost_asc_sort(a, b) {
         return ($(b).attr("name")) < ($(a).attr("name")) ? 1 : -1;
     }
     if (acost == "unknown") {
-        return 1
+        return -1
     }
     if (bcost == "unknown") {
-        return -1
+        return 1
     }
 
     var acostn = parseInt(acost)
