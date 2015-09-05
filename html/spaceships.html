@@ -64,6 +64,19 @@ function cost_dec_sort(a, b) {
     return cost_asc_sort(a,b) == 1 ? -1 : 1;
 }
 
+// http://stackoverflow.com/questions/1772035/filtering-a-list-as-you-type-with-jquery
+function filterText(element) {
+    var value = $(element).val().toLowerCase();
+
+    $("#ss_list > li").each(function() {
+        if ($(this).attr('name').toLowerCase().search(value) > -1) {
+            $(this).show();
+        }
+        else {
+            $(this).hide();
+        }
+    });
+}
 
 $(document).ready(function(){
     loadStarshipURL("http://swapi.co/api/starships/");
@@ -74,12 +87,16 @@ $(document).ready(function(){
     $("#sort_dec_btn").click(function() {
         $("#ss_list li").sort(cost_dec_sort).appendTo('#ss_list');
     })
+    jQuery('#filter').on('input propertychange paste', function() {
+        filterText($('#filter'))
+    });
 });
 
 </script>
 
 <button type="button" id="sort_asc_btn">Sort Ascending</button>
 <button type="button" id="sort_dec_btn">Sort Descending</button>
+<input type="textbox" placeholder="Filter" id="filter" />
 <ol id="ss_list", class="list"/>
 
 </body>
