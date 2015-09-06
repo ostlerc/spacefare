@@ -27,7 +27,20 @@ function getParameterByName(name) {
 function populateStarship(url) {
     $.getJSON(url, function( data ) {
         $.each( data, function( key, val ) {
-            $("#starship_data").append("<li>{0}: {1}</li>".format(key, val));
+            if (key == 'pilots') {
+                var pilotList = "<li> Pilots<ul>"
+                $.each(val, function( key, val ) {
+
+                    // yeah this seems horrible for page loading performance. but I just wanted this feature in here. :/
+                    $.ajax({ url: val, dataType: 'json', async: false, success: function(data) {
+                        pilotList += '<li><a href="{0}">{1}</a></li>'.format(val, data['name'])
+                    }});
+                });
+                pilotList += '</li>'
+                $("#starship_data").append(pilotList)
+            } else {
+                $("#starship_data").append("<li>{0}: {1}</li>".format(key, val));
+            }
         });
     });
 }

@@ -99,6 +99,7 @@ $(document).ready(function(){
     $("#sort_dec_btn").click(function() {
         $("#ss_list li").sort(cost_dec_sort).appendTo('#ss_list');
     })
+
     jQuery('#filter').on('input propertychange paste', function() {
         filterStarships();
     });
